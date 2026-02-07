@@ -86,30 +86,35 @@ public class UserService {
 
 	    User user = _repo.findByIdAndDeletedTrue(id)
 	            .orElseThrow(() ->
-	                    new UserNotFoundException("User not found with id " + id));
+	                    new UserNotFoundException("Deleted user not found with id " + id));
 
 	    user.setDeleted(false);   //  restore
 
 	    _repo.save(user);         //  persist
 	}
 
-	public UserResponseDTO updateUser(long id, UserRequestDTO updatedUser) 
-	{
+	public UserResponseDTO updateUser(long id, UserRequestDTO updatedUser) {
 
-		User existingUser = _repo.findByIdAndDeletedFalse(id)
-				.orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+	    User existingUser = _repo.findByIdAndDeletedFalse(id)
+	            .orElseThrow(() ->
+	                    new UserNotFoundException("User not found with id " + id));
 
-		// Update entity using DTO
-		existingUser.setName(updatedUser.getName());
-		existingUser.setEmail(updatedUser.getEmail());
-		existingUser.setAge(updatedUser.getAge());
+	    if (!existingUser.getEmail().equals(updatedUser.getEmail())
+	            && _repo.existsByEmailAndDeletedFalse(updatedUser.getEmail())) {
 
-		User savedUser = _repo.save(existingUser);
+	        throw new DuplicateResourceException(
+	                "Email already exists: " + updatedUser.getEmail());
+	    }
 
-		// Convert entity → response DTO
-		return mapToResponse(savedUser);
+	    existingUser.setName(updatedUser.getName());
+	    existingUser.setEmail(updatedUser.getEmail());
+	    existingUser.setAge(updatedUser.getAge());
 
+	    User savedUser = _repo.save(existingUser);
+
+	    return mapToResponse(savedUser);
 	}
+
 
 	public Page<UserResponseDTO> searchUsers(String name, Integer minAge, Integer maxAge, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -128,5 +133,6 @@ public class UserService {
 
 		return users.map(this::mapToResponse);
 	}
+	
 
 }

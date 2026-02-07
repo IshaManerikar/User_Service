@@ -26,7 +26,7 @@ public class UserController {
 
 		ApiResponse<UserResponseDTO> response = new ApiResponse<>
 		(
-				"Order created successfully",
+				"User created successfully",
 				201, 
 				order
 		);
@@ -55,7 +55,7 @@ public class UserController {
 		UserResponseDTO user = service.getUser(id);
 		ApiResponse<UserResponseDTO> response = new ApiResponse<>
 		(
-				"Order fetched successfully",
+				"User Details fetched successfully",
 				200,
 				user
 		);
@@ -89,6 +89,7 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
+	//TODO Not saving in db 
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<UserResponseDTO>> 
 	update(

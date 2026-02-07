@@ -41,6 +41,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             Pageable pageable
     );
 
+    boolean existsByEmailAndDeletedFalse(String email);
 
 
 
