@@ -89,7 +89,7 @@ public class UserController {
 		return ResponseEntity.ok(response);
 	}
 
-	//TODO Not saving in db 
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<UserResponseDTO>> 
 	update(
